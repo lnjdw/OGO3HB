@@ -1,4 +1,4 @@
-function [I dd] = AnalyseEchos(filenameLongAxis, filenameShortAxis, loadOld)
+function [I dd] = AnalyseEchos(filenameLongAxis, filenameShortAxis, loadOldType1, loadOldType2)
 %ANALYSEECHOS Calculate the volume of the left ventricle using echo images
 %   [I dd] = AnalyseEchos(filenameLongAxis, filenameShortAxis, loadOld)
 %   calculates the volume of the left ventricle using a echo image of the 
@@ -11,23 +11,25 @@ function [I dd] = AnalyseEchos(filenameLongAxis, filenameShortAxis, loadOld)
 %   Furthermore the function displays a 3D model of the ventricle.
 
 %% Handle default arguments
-if nargin < 3, loadOld = false; end
+if nargin < 4, loadOldType2 = false; end
+if nargin < 3, loadOldType1 = false; end
 
 %% Load old data or launch GUI to create new data
-if ~loadOld
+if ~loadOldType1
     [data_refpix1 data_refcm1 data_shape1 data_coeff data_intersect data_imagetype] = MeasureSegment({filenameLongAxis, filenameShortAxis},1);
-    [data_refpix2 data_refcm2 data_shape2] = MeasureSegment({filenameLongAxis, filenameShortAxis},2);
-
     f1 = data_refcm1/data_refpix1;
-    f2 = data_refcm2/data_refpix2;
-    save('echodata.mat', 'f1', 'f2', 'data_shape1', 'data_shape2', 'data_coeff', 'data_intersect', 'data_imagetype');
+    save('echodatatype1.mat', 'f1', 'data_shape1', 'data_coeff', 'data_intersect', 'data_imagetype');
 else
-    %% Debugging Code
-    f1=[];f2=[];data_shape1=[];data_shape2=[];data_coeff=[];data_intersect=[];data_imagetype=[];
-    load('echodata.mat');
-    %figure(1);
-    %imshow(data_shape1);
-    %hold on;
+    f1=[];data_shape1=[];data_coeff=[];data_intersect=[];data_imagetype=[];
+    load('echodatatype1.mat');
+end
+if ~loadOldType2
+    [data_refpix2 data_refcm2 data_shape2] = MeasureSegment({filenameLongAxis, filenameShortAxis},2);
+    f2 = data_refcm2/data_refpix2;
+    save('echodatatype2.mat', 'f2', 'data_shape2');
+else
+    f2=[];data_shape2=[];
+    load('echodatatype2.mat');
 end
 
 sz = size(data_shape1);
@@ -35,12 +37,12 @@ sz = size(data_shape1);
 %% Short Axis Data
 % Calculate short axis ellipse ratio
 ellipse_size = f2.*[data_shape2(3) data_shape2(4)];
-ellipse_ratio = ellipse_size(1)/ellipse_size(2);
 if data_imagetype == 2
     % PSL view instead of AP4, so the width and height should have been
     % interchanged.
-    ellipse_ratio = 1/ellipse_ratio;
+    ellipse_size = [ellipse_size(2) ellipse_size(1)];
 end
+ellipse_ratio = ellipse_size(1)/ellipse_size(2);
 
 %% Long Axis Data
 % Create the axis function of the freehand drawing
@@ -118,12 +120,18 @@ ydata = [0;ydata;0];
 Z = [];
 area = [];
 for i=1:length(xdata)
-    newz = (ydata(i)/2).*ellipse_ratio.*real(sqrt(1-((-10:.01:10)./(ydata(i)/2)).^2));
+    if data_imagetype == 1
+        newz = (ydata(i)/2).*ellipse_ratio.*real(sqrt(1-((-10:.01:10)./(ydata(i)/2)).^2));
+        Y(:,i) = max(min(Y(:,i), (ydata(i)/2)), -(ydata(i)/2)); % Cut off x-y plane outside the ventricle
+    else
+        newz = (ydata(i)/2).*real(sqrt(1-((-10:.01:10)./((ydata(i)/2).*ellipse_ratio)).^2));
+        Y(:,i) = max(min(Y(:,i), ellipse_ratio*(ydata(i)/2)), -ellipse_ratio*(ydata(i)/2)); % Cut off x-y plane outside the ventricle
+    end
     Z = [Z; newz];
-    Y(:,i) = max(min(Y(:,i), (ydata(i)/2)), -(ydata(i)/2)); % Cut off x-y plane outside the ventricle
     % Calculate the area of one slice
     area = [area; pi*ellipse_ratio*(ydata(i)/2)^2];
 end
+
 gui_main = figure('Toolbar', 'figure',...
           'Menubar','none',...
           'Name','Model of the left ventricle',...
