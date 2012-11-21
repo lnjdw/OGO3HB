@@ -15,15 +15,15 @@ if nargin < 3, loadOld = false; end
 
 %% Load old data or launch GUI to create new data
 if ~loadOld
-    [data_refpix1 data_refcm1 data_shape1 data_coeff1 data_intersect1] = MeasureSegment({filenameLongAxis, filenameShortAxis},1);
+    [data_refpix1 data_refcm1 data_shape1 data_coeff data_intersect data_imagetype] = MeasureSegment({filenameLongAxis, filenameShortAxis},1);
     [data_refpix2 data_refcm2 data_shape2] = MeasureSegment({filenameLongAxis, filenameShortAxis},2);
 
     f1 = data_refcm1/data_refpix1;
     f2 = data_refcm2/data_refpix2;
-    save('echodata.mat', 'f1', 'f2', 'data_shape1', 'data_shape2', 'data_coeff1', 'data_intersect1');
+    save('echodata.mat', 'f1', 'f2', 'data_shape1', 'data_shape2', 'data_coeff', 'data_intersect', 'data_imagetype');
 else
     %% Debugging Code
-    f1=[];f2=[];data_shape1=[];data_shape2=[];data_coeff1=[];data_intersect1=[];
+    f1=[];f2=[];data_shape1=[];data_shape2=[];data_coeff=[];data_intersect=[];data_imagetype=[];
     load('echodata.mat');
     %figure(1);
     %imshow(data_shape1);
@@ -36,16 +36,21 @@ sz = size(data_shape1);
 % Calculate short axis ellipse ratio
 ellipse_size = f2.*[data_shape2(3) data_shape2(4)];
 ellipse_ratio = ellipse_size(1)/ellipse_size(2);
+if data_imagetype == 2
+    % PSL view instead of AP4, so the width and height should have been
+    % interchanged.
+    ellipse_ratio = 1/ellipse_ratio;
+end
 
 %% Long Axis Data
 % Create the axis function of the freehand drawing
-a1 = data_coeff1(1);
-b1 = data_coeff1(2);
+a1 = data_coeff(1);
+b1 = data_coeff(2);
 y1 = @(x)(a1*x+b1);
 
 % Calculate the coefficients of the perpendicular function
 a2 = -1/a1;
-b2 = data_intersect1(1,2)-a2*data_intersect1(1,1);
+b2 = data_intersect(1,2)-a2*data_intersect(1,1);
 
 
 %isx = round((b2-b1)/(a1-a2));

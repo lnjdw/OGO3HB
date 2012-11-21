@@ -1,4 +1,4 @@
-function [data_refpix data_refcm data_shape data_coeff data_intersect] = MeasureSegment(filenames, type)
+function [data_refpix data_refcm data_shape data_coeff data_intersect data_imagetype] = MeasureSegment(filenames, type)
 %MEASURESEGMENT Display a GUI to let the user draw the ventricle contours.
 
 %% Data
@@ -7,6 +7,7 @@ data_refcm = 1;
 data_shape = [];
 data_coeff = [0 0];
 data_intersect = [0 0 0 0];
+data_imagetype = 1;
 
 %% Image
 % Read the image file
@@ -82,6 +83,7 @@ gui_refdisttool = imdistline(gui_mainh, [400 400], [100 200]);
 gui_refdistapi = iptgetapi(gui_refdisttool);
 gui_refdistapi.setPositionConstraintFcn(@straightLineConstraint);
 gui_refdistapi.setColor([1 0 0]);
+gui_refdistapi.addNewPositionCallback(@setReference);
 
 % Create a function to make the reference line go vertical only
     function cpos = straightLineConstraint(npos)
@@ -91,9 +93,9 @@ gui_refdistapi.setColor([1 0 0]);
 % Controls
 gui_refpanel = uipanel('Parent', gui_controlframe,'Title', 'Reference Measurement', 'Units', 'pixels', 'Position', [310 5 300 140]);
 
-gui_refstring = uicontrol('Parent', gui_refpanel,'Style', 'text', 'String', '0 pixels ==',...
+gui_refstring = uicontrol('Parent', gui_refpanel,'Style', 'text', 'String', '0 pixels ≡',...
         'Position', [gp_padding gp_height*3 gp_width gp_height],...
-        'FontWeight', 'bold');
+        'FontWeight', 'bold', 'HorizontalAlignment', 'right');
     
 gui_factorstring = uicontrol('Parent', gui_refpanel,'Style', 'text', 'String', '0 cm/pixel',...
         'Position', [2*gp_padding+gp_width gp_height*2 gp_width gp_height],...
@@ -107,17 +109,18 @@ gui_refcm = uicontrol('Parent', gui_refpanel,'Style', 'popup', 'String', '1 cm|2
     function setReference(~,~)
         data_refpix = gui_refdistapi.getDistance();
         data_refcm = get(gui_refcm, 'Value');
-        set(gui_refstring,'String',sprintf('%3.2f pixels ==',data_refpix));
+        set(gui_refstring,'String',sprintf('%3.0f pixels ≡ ',data_refpix));
         set(gui_factorstring,'String',sprintf('%0.4f pixels/cm',(data_refcm/data_refpix)));
     end
 
-uicontrol('Parent', gui_refpanel,'Style', 'pushbutton', 'String', 'Set Reference',...
-        'Position', [gp_padding gp_padding 2*gp_width+gp_padding gp_bheight],...
-        'FontSize', 12, 'FontWeight', 'bold', 'BackgroundColor', [.2 0 0], 'ForegroundColor', 'w',...
-        'Callback', @setReference); 
+%uicontrol('Parent', gui_refpanel,'Style', 'pushbutton', 'String', 'Set Reference',...
+%        'Position', [gp_padding gp_padding 2*gp_width+gp_padding gp_bheight],...
+%        'FontSize', 12, 'FontWeight', 'bold', 'BackgroundColor', [.2 0 0], 'ForegroundColor', 'w',...
+%        'Callback', @setReference); 
 
 uicontrol('Parent', gui_refpanel,'Style', 'text', 'String', 'Factor = ',...
-        'Position', [gp_padding gp_height*2 gp_width gp_height]);
+        'Position', [gp_padding gp_height*2 gp_width gp_height],...
+        'HorizontalAlignment', 'right');
 
 %% Function Declarations
 gui_lvfhtool = [];
@@ -184,6 +187,7 @@ gui_prev = [];
           'IntegerHandle','off',...
           'Position', [0 0 300 300]);
         imshow(snext);
+        set(gui_continuebutton, 'Enable', 'on');
     end
 
 %% Line perpendicular on long axis
@@ -198,8 +202,14 @@ if type == 1
     gui_lvpanel = uipanel('Parent', gui_controlframe, 'Title', 'Analysis', 'Units', 'pixels', 'Position', [620 75 300 69]);
     uicontrol('Parent', gui_lvpanel, 'Style', 'pushbutton', 'String', 'Draw Left Ventricle',...
             'Position', [gp_padding gp_padding 2*gp_width+gp_padding gp_bheight],...
-            'FontSize', 12, 'FontWeight', 'bold', 'BackgroundColor', [0 .2 0], 'ForegroundColor', 'w',...
+            'FontSize', 12, 'FontWeight', 'bold', 'BackgroundColor', [0 .4 0], 'ForegroundColor', 'w',...
             'Callback', @drawLeftVentricle);        
+    uicontrol('Parent', gui_refpanel, 'Style', 'text', 'String', 'View: ',...
+        'Value', 1, 'HorizontalAlignment', 'right',...
+        'Position', [gp_padding gp_padding gp_width gp_height]);
+    gui_imtype = uicontrol('Parent', gui_refpanel, 'Style', 'popup', 'String', 'AP4|PSL',...
+        'Value', 1,...
+        'Position', [gp_padding*2+gp_width gp_padding gp_width gp_height]);
 elseif type == 2
     % Short axis echo
     gui_ellipse = imellipse(gui_mainh, [600 200 100 100]);
@@ -212,6 +222,7 @@ end
         setReference(0, 0);
         if type == 1
             data_intersect = gui_valvelineapi.getPosition();
+            data_imagetype = get(gui_imtype, 'Value');
             if ishghandle(gui_prev)
                 close(gui_prev);
             end
@@ -223,11 +234,15 @@ end
 
 %% Continue button
 gui_prpanel = uipanel('Parent', gui_controlframe, 'Title', 'Process', 'Units', 'pixels', 'Position', [620 5 300 69]);
-uicontrol('Parent', gui_prpanel, 'Style', 'pushbutton', 'String', 'Continue',...
+gui_continuebutton = uicontrol('Parent', gui_prpanel, 'Style', 'pushbutton', 'String', 'Continue',...
             'Position', [gp_padding gp_padding 2*gp_width+gp_padding gp_bheight],...
-            'FontSize', 12, 'FontWeight', 'bold', 'BackgroundColor', [0 0 .2], 'ForegroundColor', 'w',...
+            'FontSize', 12, 'FontWeight', 'bold', 'BackgroundColor', [0 0 .4], 'ForegroundColor', 'w',...
             'Callback', @saveAndContinue);
+if type == 1
+    set(gui_continuebutton, 'Enable', 'off');
+end
 
+setReference(0,0);
 % Wait for the gui to close before returning
 waitfor(gui_mainh);
 
