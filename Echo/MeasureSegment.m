@@ -11,7 +11,7 @@ data_imagetype = 1;
 
 %% Image
 % Read the image file
-s = imread(filenames{type});
+s =filenames{type};
 
 % Create the main window for the gui
 gui_main = figure('Toolbar','none',...
