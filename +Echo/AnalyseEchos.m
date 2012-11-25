@@ -14,11 +14,11 @@ function [I dd] = AnalyseEchos(filenameLongAxis, filenameShortAxis, loadOldType1
 if nargin < 4, loadOldType2 = false; end
 if nargin < 3, loadOldType1 = false; end
 
-[frame1 frame2] = ChooseFrame(filenameLongAxis, filenameShortAxis);
+[frame1 frame2] = Echo.ChooseFrame(filenameLongAxis, filenameShortAxis);
 
 %% Load old data or launch GUI to create new data
 if ~loadOldType1
-    [data_refpix1 data_refcm1 data_shape1 data_coeff data_intersect data_imagetype] = MeasureSegment({frame1, frame2},1);
+    [data_refpix1 data_refcm1 data_shape1 data_coeff data_intersect data_imagetype] = Echo.MeasureSegment({frame1, frame2},1);
     f1 = data_refcm1/data_refpix1;
     save('echodatatype1.mat', 'f1', 'data_shape1', 'data_coeff', 'data_intersect', 'data_imagetype');
 else
@@ -26,7 +26,7 @@ else
     load('echodatatype1.mat');
 end
 if ~loadOldType2
-    [data_refpix2 data_refcm2 data_shape2] = MeasureSegment({frame1, frame2},2);
+    [data_refpix2 data_refcm2 data_shape2] = Echo.MeasureSegment({frame1, frame2},2);
     f2 = data_refcm2/data_refpix2;
     save('echodatatype2.mat', 'f2', 'data_shape2');
 else
