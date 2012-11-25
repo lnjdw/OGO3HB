@@ -1,7 +1,0 @@
-<<<<<<< HEAD
-test numero 2
-fsfa f sf
-=======
-test numero 2
-edit 2
->>>>>>> Test edit 2
