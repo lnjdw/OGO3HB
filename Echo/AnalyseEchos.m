@@ -14,7 +14,7 @@ function [I dd] = AnalyseEchos(filenameLongAxis, filenameShortAxis, loadOldType1
 if nargin < 4, loadOldType2 = false; end
 if nargin < 3, loadOldType1 = false; end
 
-[frame1 frame2] = chooseFrame(filenameLongAxis, filenameShortAxis);
+[frame1 frame2] = ChooseFrame(filenameLongAxis, filenameShortAxis);
 
 %% Load old data or launch GUI to create new data
 if ~loadOldType1

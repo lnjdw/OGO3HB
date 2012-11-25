@@ -4,13 +4,13 @@ function [rightFrame1 rightFrame2] = ChooseFrame(echo1, echo2)
 %% echo
 % Read the image file
 tic;
-movie1 = mmreader(echo1);
-m1 = read(movie1);
+movie1 = VideoReader(echo1);
+%m1 = read(movie1);
 toc
 
 tic;
-movie2= mmreader(echo2);
-m2 = read(movie2);
+movie2= VideoReader(echo2);
+%m2 = read(movie2);
 toc
 
     function imageSlider(~, ~)
@@ -24,8 +24,8 @@ toc
         set(gui_offsetslider, 'Max', movie2.NumberOfFrames-fn-1);
         set(gui_offsetslider, 'Min', -fn+1);
         os = round(get(gui_offsetslider,'Value'));
-        rightFrame1 = m1(:,:,:,fn);
-        rightFrame2 = m2(:,:,:,fn+os);
+        rightFrame1 = read(movie1, fn);%m1(:,:,:,fn);
+        rightFrame2 = read(movie2, fn+os);%m2(:,:,:,fn+os);
         subplot(1,2,1); imshow(rightFrame1, 'Border', 'tight');
         subplot(1,2,2); imshow(rightFrame2, 'Border', 'tight');
         set(gui_framenr, 'String', sprintf('Video 1: Frame %d   Video 2: Frame %d   (Offset: %d)', fn, fn+os, os));
@@ -35,7 +35,7 @@ toc
 % Create the main window for the gui
 gui_main = figure('Toolbar','none',...
           'Menubar', 'none',...
-          'Name','PickAFrame',...
+          'Name','Choose a frame',...
           'NumberTitle','off',...
           'IntegerHandle','off');
       
@@ -99,7 +99,7 @@ gui_offsetslider = uicontrol(gui_main,...
 gui_framenr = uicontrol(gui_main,...
     'Style', 'text',...
     'String', 'Frame 0',...
-    'Units', 'pixels', 'Position', [0 28 280 18],...
+    'Units', 'pixels', 'Position', [0 28 400 18],...
     'BackgroundColor', [.6 .6 .6]...
     );
 

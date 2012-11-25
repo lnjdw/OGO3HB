@@ -12,11 +12,23 @@ Authors:         Martijn van Buul <m.p.f.v.buul@student.tue.nl>
                  Lisanne Canjels <l.p.w.canjels@student.tue.nl>
                  Pascal Pieters <p.a.pieters@student.tue.nl>
                  Lafayette de Windt <l.n.j.d.windt@student.tue.nl>
-Requires:        Matlab
-Tested on:       Matlab R2012a (7.14.0.739)
+Requires:        MathWorks Matlab
+Tested on:       MathWorks Matlab R2012a (7.14.0.739)
 
 -------------------------------------- Usage ----------------------------------------
+Make sure the required software is installed before executing the steps below.
 
+1. Open Matlab and add the root directory (the directory containing this README file)
+   to your path.
+2. Look up the path to the video of the long axis cardiac echo, this can be a apical 
+   four chamber view (AP4) or a left parasternal long axis view (PSL). Also look up
+   the path of the vide of the short axis cardiac echo, this should be a parasternal
+   short axis view (PSD).
+3. In the Command Window of Matlab, execute the function AnalyseEchos using the paths
+   to the videos as arguments. So the commans should look like this:
+   >> [volume error] = AnalyseEchos('/long/axis/view.avi', '/short/axis/view.avi');
+4. A window appears displaying both videos (this may take some time, depending on the
+   size of the videos). 
 
 -------------------------------------- Files ----------------------------------------
 + <root>/
