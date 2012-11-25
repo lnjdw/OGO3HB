@@ -6,8 +6,6 @@
                                                       |_|            
 =====================================================================================
 
-test 2
-
 ------------------------------------- General ---------------------------------------
 Application:     Echo Analyser
 Authors:         Martijn van Buul <m.p.f.v.buul@student.tue.nl>
@@ -73,5 +71,3 @@ Short descriptions:
 
 * MeasureSegment.m
 <TODO: copy comments here>
-
-test 1

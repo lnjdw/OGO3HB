@@ -34,6 +34,7 @@ else
     load('echodatatype2.mat');
 end
 
+% Determine the size of the freehand drawing data
 sz = size(data_shape1);
 
 %% Short Axis Data
