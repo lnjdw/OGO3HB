@@ -11,7 +11,7 @@ data_imagetype = 1;
 
 %% Image
 % Read the image file
-s =filenames{type};
+s = filenames{type};
 
 % Create the main window for the gui
 gui_main = figure('Toolbar','none',...
@@ -113,11 +113,6 @@ gui_refcm = uicontrol('Parent', gui_refpanel,'Style', 'popup', 'String', '1 cm|2
         set(gui_factorstring,'String',sprintf('%0.4f pixels/cm',(data_refcm/data_refpix)));
     end
 
-%uicontrol('Parent', gui_refpanel,'Style', 'pushbutton', 'String', 'Set Reference',...
-%        'Position', [gp_padding gp_padding 2*gp_width+gp_padding gp_bheight],...
-%        'FontSize', 12, 'FontWeight', 'bold', 'BackgroundColor', [.2 0 0], 'ForegroundColor', 'w',...
-%        'Callback', @setReference); 
-
 uicontrol('Parent', gui_refpanel,'Style', 'text', 'String', 'Factor = ',...
         'Position', [gp_padding gp_height*2 gp_width gp_height],...
         'HorizontalAlignment', 'right');
@@ -143,7 +138,7 @@ gui_prev = [];
 % Determine the long axis of the freehand drawing
     function [bw c] = determineAxis()
         bw = gui_lvfhtool.createMask();
-        skel = bwulterode(bw);%bwmorph(bw, 'thin', Inf);
+        skel = bwulterode(bw);
         datap = zeros([sum(sum(skel)) 2]);
         cnt = 1;
         sz = size(skel);
@@ -158,12 +153,6 @@ gui_prev = [];
         end
         afit = fit(datap(:,1),datap(:,2),'poly1');
         c = coeffvalues(afit);
-        %ni = bw.*0.25+skel.*0.25;
-        %for ix=1:sz(2)
-        %    ni(min(sz(1),max(1,round(c(1).*ix+c(2)))),ix) = 1;
-        %end
-        %figure(2);
-        %imshow(ni);
     end
 
 %% Process Left Ventricle Data
