@@ -57,10 +57,6 @@ y1 = @(x)(a1*x+b1);
 a2 = -1/a1;
 b2 = data_intersect(1,2)-a2*data_intersect(1,1);
 
-
-%isx = round((b2-b1)/(a1-a2));
-%isy = round(y1(isx));
-
 % Calculate the distance covered by the lines y=a1*x+b1 and y=a2*x+b2 when
 % x increases with 1.
 dddx1 = sqrt(a1^2+1);

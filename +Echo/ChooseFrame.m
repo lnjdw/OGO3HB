@@ -5,12 +5,10 @@ function [rightFrame1 rightFrame2] = ChooseFrame(echo1, echo2)
 % Read the image file
 tic;
 movie1 = VideoReader(echo1);
-%m1 = read(movie1);
 toc
 
 tic;
 movie2= VideoReader(echo2);
-%m2 = read(movie2);
 toc
 
     function imageSlider(~, ~)
@@ -24,8 +22,8 @@ toc
         set(gui_offsetslider, 'Max', movie2.NumberOfFrames-fn-1);
         set(gui_offsetslider, 'Min', -fn+1);
         os = round(get(gui_offsetslider,'Value'));
-        rightFrame1 = read(movie1, fn);%m1(:,:,:,fn);
-        rightFrame2 = read(movie2, fn+os);%m2(:,:,:,fn+os);
+        rightFrame1 = read(movie1, fn);
+        rightFrame2 = read(movie2, fn+os);
         subplot(1,2,1); imshow(rightFrame1, 'Border', 'tight');
         subplot(1,2,2); imshow(rightFrame2, 'Border', 'tight');
         set(gui_framenr, 'String', sprintf('Video 1: Frame %d   Video 2: Frame %d   (Offset: %d)', fn, fn+os, os));
