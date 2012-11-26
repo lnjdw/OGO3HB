@@ -18,8 +18,8 @@ Tested on:       MathWorks Matlab R2012a (7.14.0.739)
 -------------------------------------- Usage ----------------------------------------
 Make sure the required software is installed before executing the steps below.
 
-1. Open Matlab and add the root directory (the directory containing this README file)
-   to your path.
+1. Open Matlab and add the root directory (the parent directory of the directory 
+   containing this README file) to your path.
 2. Look up the path to the video of the long axis cardiac echo, this can be a apical 
    four chamber view (AP4) or a left parasternal long axis view (PSL). Also look up
    the path of the video of the short axis cardiac echo, this should be a parasternal
@@ -57,10 +57,11 @@ Make sure the required software is installed before executing the steps below.
    both images (the second output argument).
 
 -------------------------------------- Files ----------------------------------------
-+ <root>/
- * AnalyseEchos.m
- * ChooseFrame.m
- * MeasureSegment.m
+- <root>/
+ - +Echo
+  * AnalyseEchos.m
+  * ChooseFrame.m
+  * MeasureSegment.m
 
 Short descriptions:
 * AnalyseEchos.m
