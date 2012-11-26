@@ -58,7 +58,7 @@ Make sure the required software is installed before executing the steps below.
 
 -------------------------------------- Files ----------------------------------------
 - <root>/
- - +Echo
+ - +Echo/
   * AnalyseEchos.m
   * ChooseFrame.m
   * MeasureSegment.m
@@ -72,5 +72,3 @@ Short descriptions:
 
 * MeasureSegment.m
 <TODO: copy comments here>
-
-test
