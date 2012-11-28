@@ -1,15 +1,19 @@
-function [rightFrame1 rightFrame2] = ChooseFrame(echo1, echo2)
+function [rightFrame1 rightFrame2 time1 time2] = ChooseFrame(echo1, echo2)
 %MEASURESEGMENT Display a GUI to let the user draw the ventricle contours.
 
 %% echo
 % Read the image file
 tic;
 movie1 = VideoReader(echo1);
+framerate = movie1.FrameRate; % Assumed is that both movies have the same frame rate
 toc
 
 tic;
 movie2= VideoReader(echo2);
 toc
+if movie1.FrameRate ~= movie2.FrameRate
+    disp('Error: The frame rates of both movies do not match');
+end
 
     function imageSlider(~, ~)
         fn = round(get(gui_imageslider,'Value'));
@@ -23,7 +27,9 @@ toc
         set(gui_offsetslider, 'Min', -fn+1);
         os = round(get(gui_offsetslider,'Value'));
         rightFrame1 = read(movie1, fn);
+        time1 = fn/framerate;
         rightFrame2 = read(movie2, fn+os);
+        time2 = (fn+os)/framerate;
         subplot(1,2,1); imshow(rightFrame1, 'Border', 'tight');
         subplot(1,2,2); imshow(rightFrame2, 'Border', 'tight');
         set(gui_framenr, 'String', sprintf('Video 1: Frame %d   Video 2: Frame %d   (Offset: %d)', fn, fn+os, os));

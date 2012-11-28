@@ -93,7 +93,7 @@ gui_refdistapi.addNewPositionCallback(@setReference);
 % Controls
 gui_refpanel = uipanel('Parent', gui_controlframe,'Title', 'Reference Measurement', 'Units', 'pixels', 'Position', [310 5 300 140]);
 
-gui_refstring = uicontrol('Parent', gui_refpanel,'Style', 'text', 'String', '0 pixels ≡',...
+gui_refstring = uicontrol('Parent', gui_refpanel,'Style', 'text', 'String', '0 pixels = ',...
         'Position', [gp_padding gp_height*3 gp_width gp_height],...
         'FontWeight', 'bold', 'HorizontalAlignment', 'right');
     
@@ -109,7 +109,7 @@ gui_refcm = uicontrol('Parent', gui_refpanel,'Style', 'popup', 'String', '1 cm|2
     function setReference(~,~)
         data_refpix = gui_refdistapi.getDistance();
         data_refcm = get(gui_refcm, 'Value');
-        set(gui_refstring,'String',sprintf('%3.0f pixels ≡ ',data_refpix));
+        set(gui_refstring,'String',sprintf('%3.0f pixels = ',data_refpix));
         set(gui_factorstring,'String',sprintf('%0.4f pixels/cm',(data_refcm/data_refpix)));
     end
 

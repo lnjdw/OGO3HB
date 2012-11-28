@@ -1,4 +1,4 @@
-function [I dd] = AnalyseEchos(filenameLongAxis, filenameShortAxis, loadOldType1, loadOldType2)
+function [I dd time1 time2] = AnalyseEchos(filenameLongAxis, filenameShortAxis, loadOldType1, loadOldType2)
 %ANALYSEECHOS Calculate the volume of the left ventricle using echo images
 %   [I dd] = AnalyseEchos(filenameLongAxis, filenameShortAxis, loadOld)
 %   calculates the volume of the left ventricle using a echo image of the 
@@ -13,8 +13,15 @@ function [I dd] = AnalyseEchos(filenameLongAxis, filenameShortAxis, loadOldType1
 %% Handle default arguments
 if nargin < 4, loadOldType2 = false; end
 if nargin < 3, loadOldType1 = false; end
-
-[frame1 frame2] = Echo.ChooseFrame(filenameLongAxis, filenameShortAxis);
+if nargin < 1
+    [tempf tempp] = uigetfile('*.avi', 'Select long axis video...');
+    filenameLongAxis = fullfile(tempp,tempf);
+end
+if nargin < 2
+    [tempf tempp] = uigetfile('*.avi', 'Select long axis video...');
+    filenameShortAxis = fullfile(tempp,tempf);
+end
+[frame1 frame2 time1 time2] = Echo.ChooseFrame(filenameLongAxis, filenameShortAxis);
 
 %% Load old data or launch GUI to create new data
 if ~loadOldType1
