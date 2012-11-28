@@ -15,11 +15,11 @@ if nargin < 4, loadOldType2 = false; end
 if nargin < 3, loadOldType1 = false; end
 if nargin < 1
     [tempf tempp] = uigetfile('*.avi', 'Select long axis video...');
-    filenameLongAxis = fullfile(tempp,tempf);
+    filenameLongAxis = fullfile(tempp,tempf)
 end
 if nargin < 2
     [tempf tempp] = uigetfile('*.avi', 'Select long axis video...');
-    filenameShortAxis = fullfile(tempp,tempf);
+    filenameShortAxis = fullfile(tempp,tempf)
 end
 [frame1 frame2 time1 time2] = Echo.ChooseFrame(filenameLongAxis, filenameShortAxis);
 
